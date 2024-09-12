@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import PlayerInput from './components/PlayerInput';
+import Game from './components/Game';
+import End from './components/End';
+import Leaderboard from './components/Leaderboard';
 
 function App() {
+  const [gameState, setGameState] = useState('playerInput');
+  const [players, setPlayers] = useState([]);
+  const [winner, setWinner] = useState(null);
+
+  const startGame = (playerNames) => {
+    setPlayers(playerNames.map(name => ({ name, isPlaying: true })));
+    setGameState('game');
+  };
+
+  const endGame = (winnerName) => {
+    setWinner(winnerName);
+    setGameState('end');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+    <div className="page-container">
+      {gameState === 'playerInput' && <PlayerInput onSubmit={startGame} />}
+      {gameState === 'game' && <Game players={players} onEnd={endGame} />}
+      {gameState === 'end' && <End winner={winner} onRestart={() => setGameState('playerInput')} />}
+      <Leaderboard />
+      <footer className="footer">
+        <a href="https://github.com/yourusername/hold-the-button-game" target="_blank" rel="noopener noreferrer">
+          View on GitHub
         </a>
-      </header>
+      </footer>
     </div>
   );
 }
