@@ -11,7 +11,11 @@ function App() {
   const [winner, setWinner] = useState(null);
 
   const startGame = (playerNames) => {
-    setPlayers(playerNames.map(name => ({ name, isPlaying: true })));
+    setPlayers(playerNames.map(name => ({ name, isPlaying: true, isReady: false })));
+    setGameState('preparation');
+  };
+
+  const beginGameplay = () => {
     setGameState('game');
   };
 
@@ -23,7 +27,14 @@ function App() {
   return (
     <div className="page-container">
       {gameState === 'playerInput' && <PlayerInput onSubmit={startGame} />}
-      {gameState === 'game' && <Game players={players} onEnd={endGame} />}
+      {(gameState === 'preparation' || gameState === 'game') && 
+        <Game 
+          players={players} 
+          onEnd={endGame} 
+          gameState={gameState}
+          onAllPlayersReady={beginGameplay}
+        />
+      }
       {gameState === 'end' && <End winner={winner} onRestart={() => setGameState('playerInput')} />}
       <Leaderboard />
       <footer className="footer">
